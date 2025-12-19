@@ -20,7 +20,7 @@ func (api *Api) handleSignupUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		if errors.Is(err, services.ErrDuplicatedEmailOrPassword) {
-			_ = jsonutils.EncodeJson(w, r, http.StatusUnprocessableEntity, map[string]any{
+			_ = jsonutils.EncodeJson(w, r, http.StatusBadRequest, map[string]any{
 				"error": "email or password already exists",
 			})
 			return

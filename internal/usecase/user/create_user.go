@@ -16,8 +16,8 @@ func (req CreateUserReq) Valid(ctx context.Context) validator.Evaluator {
 	var eval validator.Evaluator
 
 	eval.CheckField(validator.NotBlank(req.UserName), "user_name", "this field cannot be empty")
-	eval.CheckField(validator.NotBlank(req.Email), "user_name", "this field cannot be empty")
-	eval.CheckField(validator.NotBlank(req.Bio), "user_name", "this field cannot be empty")
+	eval.CheckField(validator.NotBlank(req.Email), "email", "this field cannot be empty")
+	eval.CheckField(validator.NotBlank(req.Bio), "bio", "this field cannot be empty")
 	eval.CheckField(
 		validator.MinChars(req.Bio, 10) &&
 			validator.MaxChars(req.Bio, 255),
