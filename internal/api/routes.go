@@ -23,6 +23,10 @@ func (api *Api) BindRoutes() {
 				r.Post("/login", api.handleLogin)
 				r.With(api.AuthMiddleware).Post("/logout", api.handleLogout)
 			})
+
+			r.Route("/products/", func(r chi.Router) {
+				r.Post("/", api.handleCreateProduct)
+			})
 		})
 	})
 }
