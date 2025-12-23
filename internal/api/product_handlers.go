@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"gobid/internal/jsonutils"
 	"gobid/internal/usecase/product"
 	"net/http"
@@ -36,7 +35,6 @@ func (api *Api) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if err != nil {
-		fmt.Printf("error Tiago: %+v", err)
 		jsonutils.EncodeJson(w, r, http.StatusInternalServerError, map[string]any{
 			"error": "failed to create product auction, try again later",
 		})
@@ -47,4 +45,26 @@ func (api *Api) handleCreateProduct(w http.ResponseWriter, r *http.Request) {
 		"message":    "product created with success",
 		"product_id": id,
 	})
+}
+
+func (api *Api) handleGetProductsBySellerId(w http.ResponseWriter, r *http.Request) {
+	id, ok := api.Sessions.Get(r.Context(), "AuthenticatedUserId").(uuid.UUID)
+
+	if !ok {
+		jsonutils.EncodeJson(w, r, http.StatusInternalServerError, map[string]any{
+			"error": "the seller id is not valid",
+		})
+		return
+	}
+
+	products, err := api.ProductsService.ReadProductsBySellerId(r.Context(), id)
+
+	if err != nil {
+		jsonutils.EncodeJson(w, r, http.StatusInternalServerError, map[string]any{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	jsonutils.EncodeJson(w, r, http.StatusOK, products)
 }

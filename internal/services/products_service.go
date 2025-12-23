@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"gobid/internal/responses"
 	"gobid/internal/store/pgstore"
 	"time"
 
@@ -42,4 +43,29 @@ func (ps *ProductsService) CreateProduct(
 	}
 
 	return id, nil
+}
+
+func (ps *ProductsService) ReadProductsBySellerId(ctx context.Context, sellerId uuid.UUID) ([]responses.ProductResponse, error) {
+	productsModel, err := ps.queries.GetProductsBySellerId(ctx, sellerId)
+
+	if err != nil {
+		return []responses.ProductResponse{}, err
+	}
+
+	productsResponse := make([]responses.ProductResponse, len(productsModel))
+	for i, p := range productsModel {
+		productsResponse[i] = responses.ProductResponse{
+			ID:          p.ID,
+			SellerID:    p.SellerID,
+			ProductName: p.ProductName,
+			Description: p.Description,
+			Baseprice:   p.Baseprice,
+			AuctionEnd:  p.AuctionEnd,
+			IsSold:      p.IsSold,
+			CreatedAt:   p.CreatedAt,
+			UpdatedAt:   p.UpdatedAt,
+		}
+	}
+
+	return productsResponse, nil
 }
